@@ -18,8 +18,8 @@ fastq-dump --split-3 SRR11605358.sra
 
 4.用trimmomatic cut adapter
 双端
-trimmomatic PE SRR11605358${SRR11605358.fastq} SRR11605358${/home/cc02972/workshop/genome/Celegans/SRR11605358}/${SRR11605358.fastq}SRR11605358-phred33 ILLUMINACLIP:${adapter}/adapter.fa:2:30:10 SRR11605358SLIDINGWINDOW:4:15 LEADING:3 TRAILING:3 MINLEN:18 CROP:24
-？没试过，学姐给的代码
+trimmomatic PE -phred33 SRR2015776_1.fastq /home/cc02972/workshop/human/SRR2015776/SRR2015776_1.fastq SLIDINGWINDOW:4:15 LEADING:3 TRAILING:3 MINLEN:18 CROP:24
+不懂
 单端
 trimmomatic SE -phred33 SRR11605358.fastq /home/cc02972/workshop/genome/Celegans/SRR11605358/SRR11605358_trimmed.fastq TRAILING:20 MINLEN:50
 
