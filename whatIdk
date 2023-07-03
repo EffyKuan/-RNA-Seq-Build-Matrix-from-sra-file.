@@ -10,6 +10,7 @@ wget https://ftp.ensembl.org/pub/release-109/fasta/homo_sapiens/dna/Homo_sapiens
 
 2.将SRA文件转为fastq文件
 fastq-dump --split-3 SRR11605358.sra
+如果是双端测序会出来两个_1和_2，单端只有一个。
 （我的是单端测序）
 
 3. fastqc + fastq格式文件看质控报告
