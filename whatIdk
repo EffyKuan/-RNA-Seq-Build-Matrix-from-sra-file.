@@ -1,0 +1,72 @@
+1.数据下载
+从GEO获得SRR号，或者Accession list
+prefetch SRR11605358  or  prefetch --option-file SRR_Acc_List.txt
+
+下面以一个文件为例
+
+
+2.将SRA文件转为fastq文件
+fastq-dump --split-3 SRR11605358.sra
+（我的是单端测序）
+
+3. fastqc + fastq格式文件看质控报告
+绿色好，红色不好，黄色warn。
+
+4.用trimmomatic cut adapter
+双端
+trimmomatic PE SRR11605358${SRR11605358.fastq} SRR11605358${/home/cc02972/workshop/genome/Celegans/SRR11605358}/${SRR11605358.fastq}SRR11605358-phred33 ILLUMINACLIP:${adapter}/adapter.fa:2:30:10 SRR11605358SLIDINGWINDOW:4:15 LEADING:3 TRAILING:3 MINLEN:18 CROP:24
+？没试过，学姐给的代码
+单端
+trimmomatic SE -phred33 SRR11605358.fastq /home/cc02972/workshop/genome/Celegans/SRR11605358/SRR11605358_trimmed.fastq TRAILING:20 MINLEN:50
+
+5.hisat2建立index
+双端
+file1=/home/cc02972/workshop/data/SRR2015714_1.fastq.gz（解压的也行）
+file2=/home/cc02972/workshop/data/SRR2015714_2.fastq.gz
+index=/home/cc02972/workshop/genome/human/index/hisat2/Homo_sapiens.GRCh38.dna.primary_assembly.fa
+samfile=/home/cc02972/workshop/alignment/SRR2015714.sam
+bamfile=/home/cc02972/workshop/alignment/SRR2015714.bam
+
+hisat2 -p 2 --dta -x ${index} -1 ${file1} -2 ${file2} -S ${samfile}
+samtools sort -@ 2 -o ${bamfile} ${samfile}
+
+单端
+file=/home/cc02972/workshop/genome/Celegans/SRR11605358/SRR11605358_trimmed.fastq
+index=/home/cc02972/workshop/C.elegans/index/hisat2/Caenorhabditis_elegans.WBcel235.dna.toplevel.fa
+samfile=/home/cc02972/workshop/alignment/SRR11605358_trimmed.sam
+bamfile=/home/cc02972/workshop/alignment/SRR11605358_trimmed.bam
+
+hisat2 -s 1 --dta -p 2 --rna-strandness RF -x ${index} -U ${file} -S ${samfile}
+samtools sort -@ 2 -o ${bamfile} ${samfile}
+
+sam文件可以删除留下bam
+
+
+6.将sh文件上传服务器
+sbatch +文件名（要已经cd到文件处）
+
+7.下载文件
+https://ftp.ensembl.org/pub/release-109/gtf/ 找需要的物种
+下载gtf文件
+
+8.stringtie
+gtf=/home/cc02972/workshop/data/Caenorhabditis_elegans.WBcel235.109.gtf
+#下载的gtf文件路径
+stringtie_output=/home/cc02972/workshop/stringtie/SRR11605358/SRR11605358.gtf
+#想要output的路径，至少/home/cc02972/workshop/stringtie/SRR11605358是要存在的。SRR11605358.gtf是要输出的。
+bamfile=/home/cc02972/workshop/alignment/SRR11605358_trimmed.bam
+#上面用samtools生成的
+
+stringtie -p 2 -e -B -G ${gtf} -o ${stringtie_output} ${bamfile}
+
+8.用prepDE.py生成矩阵
+把prepDE.py放在/home/cc02972/workshop/stringtie，和SRR11605358文件夹在同一个文件夹下，比SRR11605358.gtf高一个文件夹。
+在终端输入prepDE.py，即可在/home/cc02972/workshop/stringtie/找到矩阵。
+
+
+
+
+
+
+
+
