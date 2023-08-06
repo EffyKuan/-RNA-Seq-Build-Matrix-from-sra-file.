@@ -50,6 +50,34 @@ sam文件可以删除留下bam
 6.将sh文件上传服务器
 sbatch +文件名（要已经cd到文件处）
 
+6.5 bowtie_index
+Bowtie
+
+打开环境： source activate myenv(bowtie下载里面了）
+
+下载数据：ensembl
+
+Build index: bowtie_build_index
+
+创建文件夹：把数据拖进去
+
+写sh文件：
+#!/bin/bash
+#SBATCH --job-name              build-index
+#SBATCH --partition             fhs-fast
+#SBATCH --nodes                 1
+#SBATCH --tasks-per-node        1
+#SBATCH --mem                   20G
+#SBATCH --time                  24:00:00
+#SBATCH --output                fastq.%j.out
+#SBATCH --error                 fastq.%j.err
+#SBATCH --mail-type             ALL
+#SBATCH --mail-user             cc02972@um.edu.mo # Please specify your email address
+文件前提
+
+cd /home/cc02972/reference/C.elegans/bowtie_index
+bowtie-build -f /home/cc02972/reference/C.elegans/Caenorhabditis_elegans.WBcel235.dna.toplevel.fa Caenorhabditis_elegans.WBcel235.dna.toplevel.fa
+
 7.下载文件
 https://ftp.ensembl.org/pub/release-109/gtf/ 找需要的物种
 下载gtf文件
